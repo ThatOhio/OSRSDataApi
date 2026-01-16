@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSRSData.Api", "OSRSData.Api\OSRSData.Api.csproj", "{38663832-BFD9-40BC-8A6D-9B03365DE5C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Solution Items", "00 Solution Items", "{1EC7E61D-E849-4500-97D3-A3D91374A4E0}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Presentation", "01 Presentation", "{D75D368C-6466-4EE5-8BAD-606C2B00B37D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Business Logic", "02 Business Logic", "{27B75C25-0634-4CA4-ABD7-45434CCEC2DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSRSData.App", "OSRSData.App\OSRSData.App.csproj", "{A3C9F4C0-BE4F-498B-95C7-075CD0A00127}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Domain", "03 Domain", "{93B9840D-DA50-423E-9D5E-0DD6C1910B54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSRSData.Core", "OSRSData.Core\OSRSData.Core.csproj", "{E6855424-1474-41B7-A363-A60B01EB77CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Infrastructure", "04 Infrastructure", "{2408D27D-0DC4-446A-8B52-E8B4551E1C38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSRSData.DAL", "OSRSData.DAL\OSRSData.DAL.csproj", "{F088FBCB-131F-4745-81DB-5C79E8C97392}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38663832-BFD9-40BC-8A6D-9B03365DE5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38663832-BFD9-40BC-8A6D-9B03365DE5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38663832-BFD9-40BC-8A6D-9B03365DE5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38663832-BFD9-40BC-8A6D-9B03365DE5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C9F4C0-BE4F-498B-95C7-075CD0A00127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C9F4C0-BE4F-498B-95C7-075CD0A00127}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C9F4C0-BE4F-498B-95C7-075CD0A00127}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C9F4C0-BE4F-498B-95C7-075CD0A00127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6855424-1474-41B7-A363-A60B01EB77CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6855424-1474-41B7-A363-A60B01EB77CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6855424-1474-41B7-A363-A60B01EB77CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6855424-1474-41B7-A363-A60B01EB77CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F088FBCB-131F-4745-81DB-5C79E8C97392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F088FBCB-131F-4745-81DB-5C79E8C97392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F088FBCB-131F-4745-81DB-5C79E8C97392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F088FBCB-131F-4745-81DB-5C79E8C97392}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{38663832-BFD9-40BC-8A6D-9B03365DE5C4} = {D75D368C-6466-4EE5-8BAD-606C2B00B37D}
+		{A3C9F4C0-BE4F-498B-95C7-075CD0A00127} = {27B75C25-0634-4CA4-ABD7-45434CCEC2DB}
+		{E6855424-1474-41B7-A363-A60B01EB77CA} = {93B9840D-DA50-423E-9D5E-0DD6C1910B54}
+		{F088FBCB-131F-4745-81DB-5C79E8C97392} = {2408D27D-0DC4-446A-8B52-E8B4551E1C38}
+	EndGlobalSection
+EndGlobal

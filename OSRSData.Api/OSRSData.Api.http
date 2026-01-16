@@ -1,0 +1,6 @@
+@OSRSData.Api_HostAddress = http://localhost:5010
+
+GET {{OSRSData.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
