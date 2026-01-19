@@ -33,9 +33,8 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
-
-# Build results on 'Bin' directories
-**/[Bb]in/*
+[Bb]in/
+*bin\\Debug*
 # Uncomment if you have tasks that rely on *.refresh files to move binaries
 # (https://github.com/github/gitignore/pull/3736)
 #!**/[Bb]in/*.refresh

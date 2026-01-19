@@ -1,6 +1,48 @@
 @OSRSData.Api_HostAddress = http://localhost:5010
 
-GET {{OSRSData.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{OSRSData.Api_HostAddress}}/api/logs
+Content-Type: application/json
 
-###
+[
+  {
+    "player": "Faux",
+    "type": "LOOT",
+    "timestamp": 1705354920000,
+    "data": {
+      "source": "General Graardor",
+      "items": [
+        {
+          "id": 11832,
+          "name": "Bandos chestplate",
+          "quantity": 1,
+          "price": 30000000
+        },
+        {
+          "id": 526,
+          "name": "Big bones",
+          "quantity": 1,
+          "price": 500
+        }
+      ],
+      "totalValue": 30000500,
+      "kc": 420
+    }
+  },
+  {
+    "player": "Faux",
+    "type": "COLLECTION_LOG",
+    "timestamp": 1705354925000,
+    "data": {
+      "source": "Collection Log",
+      "items": [
+        {
+          "id": 0,
+          "name": "Bandos chestplate",
+          "quantity": 1,
+          "price": 0
+        }
+      ],
+      "totalValue": 0
+    }
+  }
+]
