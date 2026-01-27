@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Solution Items", "00 Sol
 		compose.dev.yaml = compose.dev.yaml
 		.env = .env
 		.env.example = .env.example
+		update.sh = update.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Presentation", "01 Presentation", "{D75D368C-6466-4EE5-8BAD-606C2B00B37D}"
