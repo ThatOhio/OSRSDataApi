@@ -16,4 +16,7 @@ public class LogEntry
     // In the future we might have different types of data.
     public Guid? LootRecordId { get; set; }
     public LootRecord? LootRecord { get; set; }
+
+    public Guid? DeathRecordId { get; set; }
+    public DeathRecord? DeathRecord { get; set; }
 }

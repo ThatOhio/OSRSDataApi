@@ -46,3 +46,18 @@ Content-Type: application/json
     }
   }
 ]
+
+###
+
+POST {{OSRSData.Api_HostAddress}}/api/deaths
+Content-Type: application/json
+
+{
+  "player": "RSN",
+  "type": "DEATH",
+  "timestamp": 1705354920000,
+  "data": {
+    "regionId": 12893,
+    "killer": "Elvarg"
+  }
+}

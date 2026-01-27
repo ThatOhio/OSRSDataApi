@@ -6,5 +6,6 @@ public enum LogType
     RAID_LOOT,
     COLLECTION_LOG,
     PET,
-    VALUABLE_DROP
+    VALUABLE_DROP,
+    DEATH
 }

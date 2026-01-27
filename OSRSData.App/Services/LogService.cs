@@ -58,4 +58,33 @@ public class LogService : ILogService
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task ProcessDeathRecordAsync(DeathEntryDto deathEntry, string? ipAddress, string? userAgent)
+    {
+        if (!Enum.TryParse<LogType>(deathEntry.Type, out var logType))
+        {
+            _logger.LogWarning("Unknown log type for death: {Type}", deathEntry.Type);
+            logType = LogType.DEATH; // Default to DEATH if it's coming to this endpoint?
+        }
+
+        var entry = new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            Player = deathEntry.Player,
+            Type = logType,
+            Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(deathEntry.Timestamp),
+            ReceivedAt = DateTimeOffset.UtcNow,
+            IpAddress = ipAddress,
+            UserAgent = userAgent,
+            DeathRecord = new DeathRecord
+            {
+                Id = Guid.NewGuid(),
+                RegionId = deathEntry.Data.RegionId,
+                Killer = deathEntry.Data.Killer
+            }
+        };
+
+        _context.LogEntries.Add(entry);
+        await _context.SaveChangesAsync();
+    }
 }

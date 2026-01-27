@@ -46,3 +46,27 @@ public class LootItemDto
     [JsonPropertyName("price")]
     public int Price { get; set; }
 }
+
+public class DeathEntryDto
+{
+    [JsonPropertyName("player")]
+    public string? Player { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
+    [JsonPropertyName("timestamp")]
+    public long Timestamp { get; set; }
+
+    [JsonPropertyName("data")]
+    public DeathRecordDto Data { get; set; } = null!;
+}
+
+public class DeathRecordDto
+{
+    [JsonPropertyName("regionId")]
+    public int RegionId { get; set; }
+
+    [JsonPropertyName("killer")]
+    public string? Killer { get; set; }
+}

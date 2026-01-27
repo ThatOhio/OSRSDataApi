@@ -12,6 +12,7 @@ public class OSRSDbContext : DbContext
     public DbSet<LogEntry> LogEntries { get; set; } = null!;
     public DbSet<LootRecord> LootRecords { get; set; } = null!;
     public DbSet<LootItem> LootItems { get; set; } = null!;
+    public DbSet<DeathRecord> DeathRecords { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,6 +31,17 @@ public class OSRSDbContext : DbContext
                 .WithOne()
                 .HasForeignKey<LogEntry>(e => e.LootRecordId)
                 .IsRequired(false);
+
+            entity.HasOne(e => e.DeathRecord)
+                .WithOne()
+                .HasForeignKey<LogEntry>(e => e.DeathRecordId)
+                .IsRequired(false);
+        });
+
+        modelBuilder.Entity<DeathRecord>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Killer).HasMaxLength(255);
         });
 
         modelBuilder.Entity<LootRecord>(entity =>
