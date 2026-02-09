@@ -13,6 +13,8 @@ public class OSRSDbContext : DbContext
     public DbSet<LootRecord> LootRecords { get; set; } = null!;
     public DbSet<LootItem> LootItems { get; set; } = null!;
     public DbSet<DeathRecord> DeathRecords { get; set; } = null!;
+    public DbSet<BingoWebhook> BingoWebhooks { get; set; } = null!;
+    public DbSet<BingoItem> BingoItems { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +61,22 @@ public class OSRSDbContext : DbContext
                 .WithMany(r => r.Items)
                 .HasForeignKey(i => i.LootRecordId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<BingoWebhook>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CharacterName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.WebhookUrl).IsRequired().HasMaxLength(2048);
+            entity.Property(e => e.IpAddress).HasMaxLength(45);
+            entity.HasIndex(e => e.CharacterName);
+        });
+
+        modelBuilder.Entity<BingoItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ItemName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Source).HasMaxLength(255);
         });
     }
 }
