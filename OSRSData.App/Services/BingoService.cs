@@ -40,10 +40,23 @@ public class BingoService : IBingoService
                 })
                 .ToListAsync();
 
+            var teamConfigEntity = await _context.BingoTeamConfigs
+                .FirstOrDefaultAsync(tc => tc.CharacterName.ToLower() == characterNameLower);
+
+            var teamConfigDto = teamConfigEntity != null
+                ? new BingoTeamConfigDto
+                {
+                    TeamName = teamConfigEntity.TeamName,
+                    TeamNameColor = teamConfigEntity.TeamNameColor,
+                    DateTimeColor = teamConfigEntity.DateTimeColor
+                }
+                : null;
+
             return new BingoConfigResponseDto
             {
                 Webhooks = webhooks,
-                Items = items
+                Items = items,
+                TeamConfig = teamConfigDto
             };
         }
         catch (Exception ex)

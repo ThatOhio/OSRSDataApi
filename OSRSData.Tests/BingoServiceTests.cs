@@ -162,4 +162,100 @@ public class BingoServiceTests
         Assert.Null(result.Items[1].Source);
         Assert.Equal("", result.Items[2].Source);
     }
+
+    [Fact]
+    public async Task GetBingoConfigAsync_WithTeamConfig_ReturnsTeamConfig()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: "BingoTest_WithTeamConfig")
+            .Options;
+        
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "TestChar",
+            TeamName = "Team Alpha",
+            TeamNameColor = "#FF5733",
+            DateTimeColor = "#1A2B3C",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await context.SaveChangesAsync();
+        
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        
+        // Act
+        var result = await service.GetBingoConfigAsync("TestChar");
+        
+        // Assert
+        Assert.NotNull(result.TeamConfig);
+        Assert.Equal("Team Alpha", result.TeamConfig.TeamName);
+        Assert.Equal("#FF5733", result.TeamConfig.TeamNameColor);
+        Assert.Equal("#1A2B3C", result.TeamConfig.DateTimeColor);
+    }
+
+    [Fact]
+    public async Task GetBingoConfigAsync_WithoutTeamConfig_ReturnsNullTeamConfig()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: "BingoTest_WithoutTeamConfig")
+            .Options;
+        
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "OtherChar",
+            TeamName = "Team Beta",
+            TeamNameColor = "#FFFFFF",
+            DateTimeColor = "#000000",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await context.SaveChangesAsync();
+        
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        
+        // Act
+        var result = await service.GetBingoConfigAsync("TestChar");
+        
+        // Assert
+        Assert.Null(result.TeamConfig);
+        Assert.Empty(result.Webhooks);
+        Assert.Empty(result.Items);
+    }
+
+    [Fact]
+    public async Task GetBingoConfigAsync_TeamConfigCaseInsensitive_ReturnsTeamConfig()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: "BingoTest_TeamConfigCaseInsensitive")
+            .Options;
+        
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "PlayerOne",
+            TeamName = "Team Gamma",
+            TeamNameColor = "#112233",
+            DateTimeColor = "#445566",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await context.SaveChangesAsync();
+        
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        
+        // Act
+        var result = await service.GetBingoConfigAsync("playerone");
+        
+        // Assert
+        Assert.NotNull(result.TeamConfig);
+        Assert.Equal("Team Gamma", result.TeamConfig.TeamName);
+    }
 }

@@ -15,6 +15,7 @@ public class OSRSDbContext : DbContext
     public DbSet<DeathRecord> DeathRecords { get; set; } = null!;
     public DbSet<BingoWebhook> BingoWebhooks { get; set; } = null!;
     public DbSet<BingoItem> BingoItems { get; set; } = null!;
+    public DbSet<BingoTeamConfig> BingoTeamConfigs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -77,6 +78,16 @@ public class OSRSDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.ItemName).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Source).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<BingoTeamConfig>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CharacterName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.TeamName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.TeamNameColor).IsRequired().HasMaxLength(7);
+            entity.Property(e => e.DateTimeColor).IsRequired().HasMaxLength(7);
+            entity.HasIndex(e => e.CharacterName).IsUnique();
         });
     }
 }

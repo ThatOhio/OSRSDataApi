@@ -10,6 +10,21 @@ public class BingoConfigResponseDto
 
     [JsonPropertyName("items")]
     public List<BingoItemDto> Items { get; set; } = new();
+
+    [JsonPropertyName("teamConfig")]
+    public BingoTeamConfigDto? TeamConfig { get; set; }
+}
+
+public class BingoTeamConfigDto
+{
+    [JsonPropertyName("teamName")]
+    public string TeamName { get; set; } = string.Empty;
+
+    [JsonPropertyName("teamNameColor")]
+    public string TeamNameColor { get; set; } = string.Empty;
+
+    [JsonPropertyName("dateTimeColor")]
+    public string DateTimeColor { get; set; } = string.Empty;
 }
 
 public class BingoItemDto
