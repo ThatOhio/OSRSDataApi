@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using OSRSData.App.DTOs;
 using OSRSData.App.Services;
 using OSRSData.Core.Entities;
 using OSRSData.DAL;
@@ -257,5 +258,160 @@ public class BingoServiceTests
         // Assert
         Assert.NotNull(result.TeamConfig);
         Assert.Equal("Team Gamma", result.TeamConfig.TeamName);
+    }
+
+    [Fact]
+    public async Task AddBingoItemsAsync_NewItems_AddsToDatabase()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        var items = new List<BingoItemDto>
+        {
+            new() { Name = "Twisted bow", Source = "CoX" },
+            new() { Name = "Scythe of vitur", Source = "ToB" }
+        };
+
+        // Act
+        await service.AddBingoItemsAsync(items);
+
+        // Assert
+        Assert.Equal(2, await context.BingoItems.CountAsync());
+        var tbow = await context.BingoItems.FirstAsync(i => i.ItemName == "Twisted bow");
+        Assert.Equal("CoX", tbow.Source);
+    }
+
+    [Fact]
+    public async Task AddBingoItemsAsync_ExistingItems_UpdatesSource()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        context.BingoItems.Add(new BingoItem
+        {
+            Id = Guid.NewGuid(),
+            ItemName = "Twisted bow",
+            Source = "Original",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await context.SaveChangesAsync();
+
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        var items = new List<BingoItemDto>
+        {
+            new() { Name = "twisted bow", Source = "Updated" } // Case insensitive match
+        };
+
+        // Act
+        await service.AddBingoItemsAsync(items);
+
+        // Assert
+        Assert.Equal(1, await context.BingoItems.CountAsync());
+        var tbow = await context.BingoItems.FirstAsync(i => i.ItemName == "Twisted bow");
+        Assert.Equal("Updated", tbow.Source);
+    }
+
+    [Fact]
+    public async Task AddBingoWebhookAsync_AddsNewWebhook()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        var webhookDto = new BingoWebhookUpdateDto
+        {
+            CharacterName = "TestPlayer",
+            WebhookUrl = "https://example.com/webhook"
+        };
+
+        // Act
+        await service.AddBingoWebhookAsync(webhookDto);
+
+        // Assert
+        Assert.Equal(1, await context.BingoWebhooks.CountAsync());
+        var webhook = await context.BingoWebhooks.FirstAsync();
+        Assert.Equal("TestPlayer", webhook.CharacterName);
+        Assert.Equal("https://example.com/webhook", webhook.WebhookUrl);
+    }
+
+    [Fact]
+    public async Task UpdateBingoTeamConfigAsync_NewConfig_CreatesConfig()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        var updateDto = new BingoTeamConfigUpdateDto
+        {
+            TeamName = "New Team",
+            TeamNameColor = "#112233",
+            DateTimeColor = "#445566"
+        };
+
+        // Act
+        await service.UpdateBingoTeamConfigAsync("NewPlayer", updateDto);
+
+        // Assert
+        var config = await context.BingoTeamConfigs.FirstOrDefaultAsync(tc => tc.CharacterName == "NewPlayer");
+        Assert.NotNull(config);
+        Assert.Equal("New Team", config.TeamName);
+        Assert.Equal("#112233", config.TeamNameColor);
+        Assert.Equal("#445566", config.DateTimeColor);
+    }
+
+    [Fact]
+    public async Task UpdateBingoTeamConfigAsync_ExistingConfig_UpdatesConfig()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "OldPlayer",
+            TeamName = "Old Team",
+            TeamNameColor = "#000000",
+            DateTimeColor = "#000000",
+            CreatedAt = DateTimeOffset.UtcNow.AddDays(-1)
+        });
+        await context.SaveChangesAsync();
+
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        var updateDto = new BingoTeamConfigUpdateDto
+        {
+            TeamName = "Updated Team",
+            TeamNameColor = "#FFFFFF",
+            DateTimeColor = "#FFFFFF"
+        };
+
+        // Act
+        await service.UpdateBingoTeamConfigAsync("oldplayer", updateDto);
+
+        // Assert
+        var config = await context.BingoTeamConfigs.FirstOrDefaultAsync(tc => tc.CharacterName == "OldPlayer");
+        Assert.NotNull(config);
+        Assert.Equal("Updated Team", config.TeamName);
+        Assert.Equal("#FFFFFF", config.TeamNameColor);
+        Assert.Equal("#FFFFFF", config.DateTimeColor);
+        Assert.NotNull(config.UpdatedAt);
     }
 }

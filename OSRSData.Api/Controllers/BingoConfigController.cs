@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -40,6 +41,73 @@ public class BingoConfigController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching bingo config for character {Character}", character);
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateConfig(
+        [FromQuery] string character,
+        [FromBody] BingoTeamConfigUpdateDto updateDto)
+    {
+        if (string.IsNullOrWhiteSpace(character))
+        {
+            return BadRequest(new { error = "Character name is required" });
+        }
+
+        if (updateDto == null)
+        {
+            return BadRequest(new { error = "Update data is required" });
+        }
+
+        try
+        {
+            await _bingoService.UpdateBingoTeamConfigAsync(character, updateDto);
+            return Ok(new { message = "Bingo team config updated successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating bingo config for character {Character}", character);
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
+    [HttpPost("items")]
+    public async Task<IActionResult> AddItems([FromBody] List<BingoItemDto> items)
+    {
+        if (items == null || items.Count == 0)
+        {
+            return BadRequest(new { error = "Items list is required and cannot be empty" });
+        }
+
+        try
+        {
+            await _bingoService.AddBingoItemsAsync(items);
+            return Ok(new { message = "Bingo items added/updated successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error adding bingo items");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
+    [HttpPost("webhooks")]
+    public async Task<IActionResult> AddWebhook([FromBody] BingoWebhookUpdateDto webhookDto)
+    {
+        if (webhookDto == null || string.IsNullOrWhiteSpace(webhookDto.CharacterName) || string.IsNullOrWhiteSpace(webhookDto.WebhookUrl))
+        {
+            return BadRequest(new { error = "Character name and Webhook URL are required" });
+        }
+
+        try
+        {
+            await _bingoService.AddBingoWebhookAsync(webhookDto);
+            return Ok(new { message = "Bingo webhook added successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error adding bingo webhook");
             return StatusCode(500, new { error = "An error occurred processing your request" });
         }
     }
