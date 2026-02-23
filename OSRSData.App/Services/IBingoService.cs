@@ -12,4 +12,5 @@ public interface IBingoService
     Task AddBingoItemsAsync(List<BingoItemDto> items);
     Task AddBingoWebhookAsync(BingoWebhookUpdateDto webhookDto);
     Task AddBingoWebhooksBulkAsync(List<BingoWebhookUpdateDto> webhooks);
+    Task CloneBingoConfigAsync(BingoConfigCloneDto cloneDto);
 }

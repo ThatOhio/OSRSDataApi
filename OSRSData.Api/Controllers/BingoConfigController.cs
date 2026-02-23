@@ -151,4 +151,24 @@ public class BingoConfigController : ControllerBase
             return StatusCode(500, new { error = "An error occurred processing your request" });
         }
     }
+
+    [HttpPost("clone")]
+    public async Task<IActionResult> CloneConfig([FromBody] BingoConfigCloneDto cloneDto)
+    {
+        if (cloneDto == null || string.IsNullOrWhiteSpace(cloneDto.SourceCharacterName) || string.IsNullOrWhiteSpace(cloneDto.TargetCharacterName))
+        {
+            return BadRequest(new { error = "Source and target character names are required" });
+        }
+
+        try
+        {
+            await _bingoService.CloneBingoConfigAsync(cloneDto);
+            return Ok(new { message = $"Bingo config cloned from {cloneDto.SourceCharacterName} to {cloneDto.TargetCharacterName} successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error cloning bingo config");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
 }

@@ -119,7 +119,25 @@ Adds multiple Discord webhooks for characters.
 
 ---
 
-## 6. Get Bingo Configuration
+## 6. Clone Bingo Configuration
+
+Clones team settings and webhooks from one character to another.
+
+- **Method**: `POST`
+- **URL**: `/api/BingoConfig/clone`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+```json
+{
+  "sourceCharacterName": "PlayerOne",
+  "targetCharacterName": "PlayerTwo"
+}
+```
+- **Description**: Copies the team name, team color, and date/time color from the source character to the target character. It also copies all Discord webhooks registered for the source character to the target character. If the target character already has a team config, it will be updated.
+
+---
+
+## 7. Get Bingo Configuration
 
 Fetches all configuration (webhooks, items, and team settings) for a specific character.
 

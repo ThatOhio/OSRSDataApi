@@ -499,4 +499,81 @@ public class BingoServiceTests
         Assert.Contains(allWebhooks, w => w.CharacterName == "Player1" && w.WebhookUrl == "url1");
         Assert.Contains(allWebhooks, w => w.CharacterName == "Player2" && w.WebhookUrl == "url2");
     }
+
+    [Fact]
+    public async Task CloneBingoConfigAsync_ClonesTeamConfigAndWebhooks()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        
+        // Setup source character
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "SourcePlayer",
+            TeamName = "Source Team",
+            TeamNameColor = "#111111",
+            DateTimeColor = "#222222",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        context.BingoWebhooks.Add(new BingoWebhook
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "SourcePlayer",
+            WebhookUrl = "https://source.com/webhook1",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        context.BingoWebhooks.Add(new BingoWebhook
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "SourcePlayer",
+            WebhookUrl = "https://source.com/webhook2",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        
+        // Setup target character with existing config (to test update)
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "TargetPlayer",
+            TeamName = "Old Team",
+            TeamNameColor = "#000000",
+            DateTimeColor = "#000000",
+            CreatedAt = DateTimeOffset.UtcNow.AddDays(-1)
+        });
+        
+        await context.SaveChangesAsync();
+
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        var cloneDto = new BingoConfigCloneDto
+        {
+            SourceCharacterName = "SourcePlayer",
+            TargetCharacterName = "TargetPlayer"
+        };
+
+        // Act
+        await service.CloneBingoConfigAsync(cloneDto);
+
+        // Assert
+        // Check Team Config
+        var targetTeamConfig = await context.BingoTeamConfigs
+            .FirstOrDefaultAsync(tc => tc.CharacterName == "TargetPlayer");
+        Assert.NotNull(targetTeamConfig);
+        Assert.Equal("Source Team", targetTeamConfig.TeamName);
+        Assert.Equal("#111111", targetTeamConfig.TeamNameColor);
+        Assert.Equal("#222222", targetTeamConfig.DateTimeColor);
+        Assert.NotNull(targetTeamConfig.UpdatedAt);
+
+        // Check Webhooks
+        var targetWebhooks = await context.BingoWebhooks
+            .Where(w => w.CharacterName == "TargetPlayer")
+            .ToListAsync();
+        Assert.Equal(2, targetWebhooks.Count);
+        Assert.Contains(targetWebhooks, w => w.WebhookUrl == "https://source.com/webhook1");
+        Assert.Contains(targetWebhooks, w => w.WebhookUrl == "https://source.com/webhook2");
+    }
 }

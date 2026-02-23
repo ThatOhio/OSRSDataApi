@@ -220,4 +220,66 @@ public class BingoService : IBingoService
             throw;
         }
     }
+
+    public async Task CloneBingoConfigAsync(BingoConfigCloneDto cloneDto)
+    {
+        try
+        {
+            var sourceNameLower = cloneDto.SourceCharacterName.ToLower();
+            var targetNameLower = cloneDto.TargetCharacterName.ToLower();
+
+            // 1. Clone Team Config
+            var sourceTeamConfig = await _context.BingoTeamConfigs
+                .FirstOrDefaultAsync(tc => tc.CharacterName.ToLower() == sourceNameLower);
+
+            if (sourceTeamConfig != null)
+            {
+                var targetTeamConfig = await _context.BingoTeamConfigs
+                    .FirstOrDefaultAsync(tc => tc.CharacterName.ToLower() == targetNameLower);
+
+                if (targetTeamConfig == null)
+                {
+                    targetTeamConfig = new BingoTeamConfig
+                    {
+                        Id = Guid.NewGuid(),
+                        CharacterName = cloneDto.TargetCharacterName,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    };
+                    _context.BingoTeamConfigs.Add(targetTeamConfig);
+                }
+
+                targetTeamConfig.TeamName = sourceTeamConfig.TeamName;
+                targetTeamConfig.TeamNameColor = sourceTeamConfig.TeamNameColor;
+                targetTeamConfig.DateTimeColor = sourceTeamConfig.DateTimeColor;
+                targetTeamConfig.UpdatedAt = DateTimeOffset.UtcNow;
+            }
+
+            // 2. Clone Webhooks
+            var sourceWebhooks = await _context.BingoWebhooks
+                .Where(w => w.CharacterName.ToLower() == sourceNameLower)
+                .ToListAsync();
+
+            if (sourceWebhooks.Any())
+            {
+                foreach (var sw in sourceWebhooks)
+                {
+                    _context.BingoWebhooks.Add(new BingoWebhook
+                    {
+                        Id = Guid.NewGuid(),
+                        CharacterName = cloneDto.TargetCharacterName,
+                        WebhookUrl = sw.WebhookUrl,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error cloning bingo config from {Source} to {Target}", 
+                cloneDto.SourceCharacterName, cloneDto.TargetCharacterName);
+            throw;
+        }
+    }
 }
