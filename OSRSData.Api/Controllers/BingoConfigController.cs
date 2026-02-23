@@ -131,4 +131,24 @@ public class BingoConfigController : ControllerBase
             return StatusCode(500, new { error = "An error occurred processing your request" });
         }
     }
+
+    [HttpPost("webhooks/bulk")]
+    public async Task<IActionResult> AddWebhooksBulk([FromBody] List<BingoWebhookUpdateDto> webhooks)
+    {
+        if (webhooks == null || webhooks.Count == 0)
+        {
+            return BadRequest(new { error = "Webhook list is required and cannot be empty" });
+        }
+
+        try
+        {
+            await _bingoService.AddBingoWebhooksBulkAsync(webhooks);
+            return Ok(new { message = "Bingo webhooks added successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk adding bingo webhooks");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
 }

@@ -196,4 +196,28 @@ public class BingoService : IBingoService
             throw;
         }
     }
+
+    public async Task AddBingoWebhooksBulkAsync(List<BingoWebhookUpdateDto> webhooks)
+    {
+        try
+        {
+            foreach (var webhookDto in webhooks)
+            {
+                _context.BingoWebhooks.Add(new BingoWebhook
+                {
+                    Id = Guid.NewGuid(),
+                    CharacterName = webhookDto.CharacterName,
+                    WebhookUrl = webhookDto.WebhookUrl,
+                    CreatedAt = DateTimeOffset.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk adding bingo webhooks");
+            throw;
+        }
+    }
 }

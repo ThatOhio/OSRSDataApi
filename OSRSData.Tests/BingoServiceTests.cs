@@ -472,4 +472,31 @@ public class BingoServiceTests
         Assert.Equal("#333333", newlyAdded.TeamNameColor);
         Assert.NotNull(newlyAdded.UpdatedAt);
     }
+
+    [Fact]
+    public async Task AddBingoWebhooksBulkAsync_AddsMultipleWebhooks()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        var webhooks = new List<BingoWebhookUpdateDto>
+        {
+            new BingoWebhookUpdateDto { CharacterName = "Player1", WebhookUrl = "url1" },
+            new BingoWebhookUpdateDto { CharacterName = "Player2", WebhookUrl = "url2" }
+        };
+
+        // Act
+        await service.AddBingoWebhooksBulkAsync(webhooks);
+
+        // Assert
+        Assert.Equal(2, await context.BingoWebhooks.CountAsync());
+        var allWebhooks = await context.BingoWebhooks.ToListAsync();
+        Assert.Contains(allWebhooks, w => w.CharacterName == "Player1" && w.WebhookUrl == "url1");
+        Assert.Contains(allWebhooks, w => w.CharacterName == "Player2" && w.WebhookUrl == "url2");
+    }
 }

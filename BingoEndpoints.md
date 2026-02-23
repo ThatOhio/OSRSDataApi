@@ -95,7 +95,31 @@ Adds a new Discord webhook for a specific character.
 
 ---
 
-## 5. Get Bingo Configuration
+## 5. Bulk Add Bingo Webhooks
+
+Adds multiple Discord webhooks for characters.
+
+- **Method**: `POST`
+- **URL**: `/api/BingoConfig/webhooks/bulk`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+```json
+[
+  {
+    "characterName": "PlayerOne",
+    "webhookUrl": "https://discord.com/api/webhooks/..."
+  },
+  {
+    "characterName": "PlayerTwo",
+    "webhookUrl": "https://discord.com/api/webhooks/..."
+  }
+]
+```
+- **Description**: Adds multiple new records to the webhooks table.
+
+---
+
+## 6. Get Bingo Configuration
 
 Fetches all configuration (webhooks, items, and team settings) for a specific character.
 
