@@ -99,6 +99,47 @@ public class BingoService : IBingoService
             throw;
         }
     }
+    
+    public async Task UpdateBingoTeamConfigsBulkAsync(List<BingoTeamConfigBulkDto> configs)
+    {
+        try
+        {
+            var characterNames = configs.Select(c => c.CharacterName.ToLower()).ToList();
+            var existingConfigs = await _context.BingoTeamConfigs
+                .Where(tc => characterNames.Contains(tc.CharacterName.ToLower()))
+                .ToListAsync();
+
+            foreach (var configDto in configs)
+            {
+                var characterNameLower = configDto.CharacterName.ToLower();
+                var teamConfig = existingConfigs
+                    .FirstOrDefault(tc => tc.CharacterName.ToLower() == characterNameLower);
+
+                if (teamConfig == null)
+                {
+                    teamConfig = new BingoTeamConfig
+                    {
+                        Id = Guid.NewGuid(),
+                        CharacterName = configDto.CharacterName,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    };
+                    _context.BingoTeamConfigs.Add(teamConfig);
+                }
+
+                teamConfig.TeamName = configDto.TeamName;
+                teamConfig.TeamNameColor = configDto.TeamNameColor;
+                teamConfig.DateTimeColor = configDto.DateTimeColor;
+                teamConfig.UpdatedAt = DateTimeOffset.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk updating bingo team configs");
+            throw;
+        }
+    }
 
     public async Task AddBingoItemsAsync(List<BingoItemDto> items)
     {

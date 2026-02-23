@@ -72,6 +72,26 @@ public class BingoConfigController : ControllerBase
         }
     }
 
+    [HttpPost("teams")]
+    public async Task<IActionResult> UpdateConfigsBulk([FromBody] List<BingoTeamConfigBulkDto> configs)
+    {
+        if (configs == null || configs.Count == 0)
+        {
+            return BadRequest(new { error = "Config list is required and cannot be empty" });
+        }
+
+        try
+        {
+            await _bingoService.UpdateBingoTeamConfigsBulkAsync(configs);
+            return Ok(new { message = "Bingo team configs updated successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk updating bingo team configs");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
     [HttpPost("items")]
     public async Task<IActionResult> AddItems([FromBody] List<BingoItemDto> items)
     {

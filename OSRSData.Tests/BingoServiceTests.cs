@@ -414,4 +414,62 @@ public class BingoServiceTests
         Assert.Equal("#FFFFFF", config.DateTimeColor);
         Assert.NotNull(config.UpdatedAt);
     }
+
+    [Fact]
+    public async Task UpdateBingoTeamConfigsBulkAsync_UpdatesAndInsertsCorrectly()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: "BingoTest_BulkUpdate")
+            .Options;
+        
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "ExistingChar",
+            TeamName = "Old Name",
+            TeamNameColor = "#000000",
+            DateTimeColor = "#000000",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        await context.SaveChangesAsync();
+        
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        
+        var configs = new List<BingoTeamConfigBulkDto>
+        {
+            new BingoTeamConfigBulkDto
+            {
+                CharacterName = "ExistingChar",
+                TeamName = "New Name",
+                TeamNameColor = "#111111",
+                DateTimeColor = "#222222"
+            },
+            new BingoTeamConfigBulkDto
+            {
+                CharacterName = "NewChar",
+                TeamName = "Brand New Team",
+                TeamNameColor = "#333333",
+                DateTimeColor = "#444444"
+            }
+        };
+        
+        // Act
+        await service.UpdateBingoTeamConfigsBulkAsync(configs);
+        
+        // Assert
+        var existing = await context.BingoTeamConfigs.FirstOrDefaultAsync(tc => tc.CharacterName == "ExistingChar");
+        Assert.NotNull(existing);
+        Assert.Equal("New Name", existing.TeamName);
+        Assert.Equal("#111111", existing.TeamNameColor);
+        Assert.NotNull(existing.UpdatedAt);
+        
+        var newlyAdded = await context.BingoTeamConfigs.FirstOrDefaultAsync(tc => tc.CharacterName == "NewChar");
+        Assert.NotNull(newlyAdded);
+        Assert.Equal("Brand New Team", newlyAdded.TeamName);
+        Assert.Equal("#333333", newlyAdded.TeamNameColor);
+        Assert.NotNull(newlyAdded.UpdatedAt);
+    }
 }

@@ -8,6 +8,7 @@ public interface IBingoService
 {
     Task<BingoConfigResponseDto> GetBingoConfigAsync(string characterName);
     Task UpdateBingoTeamConfigAsync(string characterName, BingoTeamConfigUpdateDto updateDto);
+    Task UpdateBingoTeamConfigsBulkAsync(List<BingoTeamConfigBulkDto> configs);
     Task AddBingoItemsAsync(List<BingoItemDto> items);
     Task AddBingoWebhookAsync(BingoWebhookUpdateDto webhookDto);
 }

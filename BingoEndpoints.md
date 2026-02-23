@@ -21,7 +21,35 @@ Updates or creates the team configuration for a specific character. There is onl
 
 ---
 
-## 2. Add/Update Bingo Items
+## 2. Bulk Update Bingo Team Configurations
+
+Updates or creates team configurations for multiple characters at once.
+
+- **Method**: `POST`
+- **URL**: `/api/BingoConfig/teams`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+```json
+[
+  {
+    "characterName": "PlayerOne",
+    "teamName": "The Champions",
+    "teamNameColor": "#FFD700",
+    "dateTimeColor": "#FFFFFF"
+  },
+  {
+    "characterName": "PlayerTwo",
+    "teamName": "The Challengers",
+    "teamNameColor": "#C0C0C0",
+    "dateTimeColor": "#000000"
+  }
+]
+```
+- **Description**: Performs a bulk "upsert". For each character in the list, if a configuration already exists, it will be updated. Otherwise, a new one will be created.
+
+---
+
+## 3. Add/Update Bingo Items
 
 Adds a list of items to the bingo pool or updates their sources if they already exist.
 
@@ -49,7 +77,7 @@ Adds a list of items to the bingo pool or updates their sources if they already 
 
 ---
 
-## 3. Add Bingo Webhook
+## 4. Add Bingo Webhook
 
 Adds a new Discord webhook for a specific character.
 
@@ -67,7 +95,7 @@ Adds a new Discord webhook for a specific character.
 
 ---
 
-## 4. Get Bingo Configuration
+## 5. Get Bingo Configuration
 
 Fetches all configuration (webhooks, items, and team settings) for a specific character.
 
