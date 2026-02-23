@@ -171,4 +171,24 @@ public class BingoConfigController : ControllerBase
             return StatusCode(500, new { error = "An error occurred processing your request" });
         }
     }
+
+    [HttpPost("clone/bulk")]
+    public async Task<IActionResult> CloneConfigsBulk([FromBody] List<BingoConfigCloneDto> cloneDtos)
+    {
+        if (cloneDtos == null || cloneDtos.Count == 0)
+        {
+            return BadRequest(new { error = "Clone list is required and cannot be empty" });
+        }
+
+        try
+        {
+            await _bingoService.CloneBingoConfigsBulkAsync(cloneDtos);
+            return Ok(new { message = "Bingo configs cloned successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk cloning bingo configs");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
 }

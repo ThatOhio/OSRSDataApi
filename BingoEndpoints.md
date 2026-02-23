@@ -137,7 +137,31 @@ Clones team settings and webhooks from one character to another.
 
 ---
 
-## 7. Get Bingo Configuration
+## 7. Bulk Clone Bingo Configurations
+
+Clones team settings and webhooks for multiple pairs of characters at once.
+
+- **Method**: `POST`
+- **URL**: `/api/BingoConfig/clone/bulk`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+```json
+[
+  {
+    "sourceCharacterName": "PlayerOne",
+    "targetCharacterName": "PlayerTwo"
+  },
+  {
+    "sourceCharacterName": "PlayerThree",
+    "targetCharacterName": "PlayerFour"
+  }
+]
+```
+- **Description**: Performs bulk cloning of team settings and webhooks. For each pair in the list, it copies the configuration from the source character to the target character.
+
+---
+
+## 8. Get Bingo Configuration
 
 Fetches all configuration (webhooks, items, and team settings) for a specific character.
 

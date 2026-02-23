@@ -282,4 +282,80 @@ public class BingoService : IBingoService
             throw;
         }
     }
+
+    public async Task CloneBingoConfigsBulkAsync(List<BingoConfigCloneDto> cloneDtos)
+    {
+        try
+        {
+            var sourceNames = cloneDtos.Select(c => c.SourceCharacterName.ToLower()).Distinct().ToList();
+            var targetNames = cloneDtos.Select(c => c.TargetCharacterName.ToLower()).Distinct().ToList();
+            var allNames = sourceNames.Concat(targetNames).Distinct().ToList();
+
+            // Fetch team configs for both source and target names
+            var teamConfigs = await _context.BingoTeamConfigs
+                .Where(tc => allNames.Contains(tc.CharacterName.ToLower()))
+                .ToListAsync();
+
+            // Fetch webhooks for source names
+            var sourceWebhooks = await _context.BingoWebhooks
+                .Where(w => sourceNames.Contains(w.CharacterName.ToLower()))
+                .ToListAsync();
+
+            foreach (var cloneDto in cloneDtos)
+            {
+                var sourceNameLower = cloneDto.SourceCharacterName.ToLower();
+                var targetNameLower = cloneDto.TargetCharacterName.ToLower();
+
+                // 1. Clone Team Config
+                var sourceTeamConfig = teamConfigs
+                    .FirstOrDefault(tc => tc.CharacterName.ToLower() == sourceNameLower);
+
+                if (sourceTeamConfig != null)
+                {
+                    var targetTeamConfig = teamConfigs
+                        .FirstOrDefault(tc => tc.CharacterName.ToLower() == targetNameLower);
+
+                    if (targetTeamConfig == null)
+                    {
+                        targetTeamConfig = new BingoTeamConfig
+                        {
+                            Id = Guid.NewGuid(),
+                            CharacterName = cloneDto.TargetCharacterName,
+                            CreatedAt = DateTimeOffset.UtcNow
+                        };
+                        _context.BingoTeamConfigs.Add(targetTeamConfig);
+                        teamConfigs.Add(targetTeamConfig); // Add to the local list so we can find it again if it's a source for someone else in this batch
+                    }
+
+                    targetTeamConfig.TeamName = sourceTeamConfig.TeamName;
+                    targetTeamConfig.TeamNameColor = sourceTeamConfig.TeamNameColor;
+                    targetTeamConfig.DateTimeColor = sourceTeamConfig.DateTimeColor;
+                    targetTeamConfig.UpdatedAt = DateTimeOffset.UtcNow;
+                }
+
+                // 2. Clone Webhooks
+                var currentSourceWebhooks = sourceWebhooks
+                    .Where(w => w.CharacterName.ToLower() == sourceNameLower)
+                    .ToList();
+
+                foreach (var sw in currentSourceWebhooks)
+                {
+                    _context.BingoWebhooks.Add(new BingoWebhook
+                    {
+                        Id = Guid.NewGuid(),
+                        CharacterName = cloneDto.TargetCharacterName,
+                        WebhookUrl = sw.WebhookUrl,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk cloning bingo configs");
+            throw;
+        }
+    }
 }
