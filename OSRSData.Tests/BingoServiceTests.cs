@@ -686,4 +686,54 @@ public class BingoServiceTests
         Assert.NotNull(configC);
         Assert.Equal("TeamA", configC.TeamName);
     }
+
+    [Fact]
+    public async Task DeleteBingoConfigAsync_RemovesTeamConfigAndWebhooks()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "DeleteMe",
+            TeamName = "To Be Deleted",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        
+        context.BingoWebhooks.Add(new BingoWebhook
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "DeleteMe",
+            WebhookUrl = "https://delete.me/webhook",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        
+        context.BingoTeamConfigs.Add(new BingoTeamConfig
+        {
+            Id = Guid.NewGuid(),
+            CharacterName = "KeepMe",
+            TeamName = "To Be Kept",
+            CreatedAt = DateTimeOffset.UtcNow
+        });
+        
+        await context.SaveChangesAsync();
+        
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+        
+        // Act
+        await service.DeleteBingoConfigAsync("deleteme"); // Test case insensitivity
+        
+        // Assert
+        Assert.False(await context.BingoTeamConfigs.AnyAsync(tc => tc.CharacterName == "DeleteMe"));
+        Assert.False(await context.BingoWebhooks.AnyAsync(w => w.CharacterName == "DeleteMe"));
+        
+        Assert.True(await context.BingoTeamConfigs.AnyAsync(tc => tc.CharacterName == "KeepMe"));
+        Assert.Equal(1, await context.BingoTeamConfigs.CountAsync());
+        Assert.Equal(0, await context.BingoWebhooks.CountAsync());
+    }
 }

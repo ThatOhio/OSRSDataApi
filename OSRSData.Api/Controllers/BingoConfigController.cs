@@ -191,4 +191,24 @@ public class BingoConfigController : ControllerBase
             return StatusCode(500, new { error = "An error occurred processing your request" });
         }
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteConfig([FromQuery] string character)
+    {
+        if (string.IsNullOrWhiteSpace(character))
+        {
+            return BadRequest(new { error = "Character name is required" });
+        }
+
+        try
+        {
+            await _bingoService.DeleteBingoConfigAsync(character);
+            return Ok(new { message = $"Bingo config for character {character} deleted successfully" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting bingo config for character {Character}", character);
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
 }

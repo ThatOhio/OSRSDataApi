@@ -169,3 +169,13 @@ Fetches all configuration (webhooks, items, and team settings) for a specific ch
 - **URL**: `/api/BingoConfig?character={CHARACTER_NAME}`
 - **Body**: (Optional empty object `{}`)
 - **Description**: Returns the current configuration including all registered webhooks for the character, all items in the bingo pool, and the team configuration if it exists.
+
+---
+
+## 9. Delete Bingo Configuration
+
+Deletes any team configurations and webhooks for a specific character name.
+
+- **Method**: `DELETE`
+- **URL**: `/api/BingoConfig?character={CHARACTER_NAME}`
+- **Description**: Deletes all `BingoTeamConfig` and `BingoWebhook` records associated with the given character (case-insensitive). Global `BingoItem` entries are not affected.

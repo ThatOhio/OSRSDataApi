@@ -358,4 +358,40 @@ public class BingoService : IBingoService
             throw;
         }
     }
+
+    public async Task DeleteBingoConfigAsync(string characterName)
+    {
+        try
+        {
+            var characterNameLower = characterName.ToLower();
+
+            var teamConfigs = await _context.BingoTeamConfigs
+                .Where(tc => tc.CharacterName.ToLower() == characterNameLower)
+                .ToListAsync();
+
+            var webhooks = await _context.BingoWebhooks
+                .Where(w => w.CharacterName.ToLower() == characterNameLower)
+                .ToListAsync();
+
+            if (teamConfigs.Any())
+            {
+                _context.BingoTeamConfigs.RemoveRange(teamConfigs);
+            }
+
+            if (webhooks.Any())
+            {
+                _context.BingoWebhooks.RemoveRange(webhooks);
+            }
+
+            if (teamConfigs.Any() || webhooks.Any())
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting bingo config for character {Character}", characterName);
+            throw;
+        }
+    }
 }
