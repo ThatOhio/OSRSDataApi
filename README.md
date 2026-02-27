@@ -1,6 +1,8 @@
 # OSRSDataApi
 Provides various data collection endpoints to the faux-bingo plugin.
 
+See [BingoEndpoints.md](BingoEndpoints.md) for detailed API documentation.
+
 ## Local Development
 
 This project is optimized for development using **JetBrains Rider** and **Docker Compose**.

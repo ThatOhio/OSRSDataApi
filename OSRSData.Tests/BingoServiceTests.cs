@@ -740,4 +740,64 @@ public class BingoServiceTests
         Assert.Equal(1, await context.BingoTeamConfigs.CountAsync());
         Assert.Equal(0, await context.BingoWebhooks.CountAsync());
     }
+
+    [Fact]
+    public void GetTeamIcons_ReturnsHardcodedList()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        // Act
+        var result = service.GetTeamIcons();
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal("Shayzien Shower Skippers", result[0].TeamName);
+        Assert.Equal("https://www.emoji.family/api/emojis/1f9a8/twemoji/png/32", result[0].TeamIcon);
+    }
+
+    [Fact]
+    public async Task GetAllTeamMappingsAsync_ReturnsAllMappings()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<OSRSDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+
+        using var context = new OSRSDbContext(options);
+        
+        context.BingoTeamConfigs.AddRange(new List<BingoTeamConfig>
+        {
+            new BingoTeamConfig
+            {
+                Id = Guid.NewGuid(),
+                CharacterName = "PlayerOne",
+                TeamName = "Team1",
+                CreatedAt = DateTimeOffset.UtcNow
+            },
+            new BingoTeamConfig
+            {
+                Id = Guid.NewGuid(),
+                CharacterName = "PlayerTwo",
+                TeamName = "Team2",
+                CreatedAt = DateTimeOffset.UtcNow
+            }
+        });
+        await context.SaveChangesAsync();
+
+        var service = new BingoService(context, NullLogger<BingoService>.Instance);
+
+        // Act
+        var result = await service.GetAllTeamMappingsAsync();
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, m => m.Character == "PlayerOne" && m.TeamName == "Team1");
+        Assert.Contains(result, m => m.Character == "PlayerTwo" && m.TeamName == "Team2");
+    }
 }

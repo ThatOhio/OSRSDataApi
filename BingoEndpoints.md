@@ -1,6 +1,6 @@
 # Bingo API Endpoints
 
-This document defines the API endpoints available for managing Bingo configurations, including team settings, items, webhooks, and activity logs.
+This document defines the API endpoints available for managing Bingo configurations, including team settings, items, webhooks, team icons, and activity logs.
 
 ## 1. Update Bingo Team Configuration
 
@@ -257,3 +257,45 @@ Ingests a death record for a character.
 }
 ```
 - **Description**: Accepts a single death record including the player name, type ("DEATH"), unix timestamp, and death-specific data like region ID and killer name.
+
+---
+
+## 12. Get Bingo Team Icons
+
+Returns a list of predefined team names and their corresponding icons.
+
+- **Method**: `GET`
+- **URL**: `/api/BingoConfig/teamIcons`
+- **Description**: Returns a static list of objects, each containing a `teamName` and a `teamIcon` string. This list is currently hardcoded and used by the client plugin.
+- **Response**:
+```json
+[
+  {
+    "teamName": "Shayzien Shower Skippers",
+    "teamIcon": "https://www.emoji.family/api/emojis/1f9a8/twemoji/png/32"
+  }
+]
+```
+
+---
+
+## 13. Get All Bingo Team Mappings
+
+Returns a list of all characters and their assigned team names.
+
+- **Method**: `GET`
+- **URL**: `/api/BingoConfig/teams`
+- **Description**: Returns an array of objects, each containing a `character` and a `teamName`. This is used to map specific character names in game to their respective team based on the configurations stored in the database.
+- **Response**:
+```json
+[
+  {
+    "character": "PlayerOne",
+    "teamName": "The Champions"
+  },
+  {
+    "character": "PlayerTwo",
+    "teamName": "The Challengers"
+  }
+]
+```

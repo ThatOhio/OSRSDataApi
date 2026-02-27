@@ -15,4 +15,6 @@ public interface IBingoService
     Task CloneBingoConfigAsync(BingoConfigCloneDto cloneDto);
     Task CloneBingoConfigsBulkAsync(List<BingoConfigCloneDto> cloneDtos);
     Task DeleteBingoConfigAsync(string characterName);
+    List<BingoTeamIconDto> GetTeamIcons();
+    Task<List<BingoTeamMappingDto>> GetAllTeamMappingsAsync();
 }

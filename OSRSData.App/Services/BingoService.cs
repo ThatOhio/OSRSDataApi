@@ -399,4 +399,35 @@ public class BingoService : IBingoService
             throw;
         }
     }
+
+    public List<BingoTeamIconDto> GetTeamIcons()
+    {
+        return new List<BingoTeamIconDto>
+        {
+            new BingoTeamIconDto
+            {
+                TeamName = "Shayzien Shower Skippers",
+                TeamIcon = "https://www.emoji.family/api/emojis/1f9a8/twemoji/png/32"
+            }
+        };
+    }
+
+    public async Task<List<BingoTeamMappingDto>> GetAllTeamMappingsAsync()
+    {
+        try
+        {
+            return await _context.BingoTeamConfigs
+                .Select(tc => new BingoTeamMappingDto
+                {
+                    Character = tc.CharacterName,
+                    TeamName = tc.TeamName
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching all team mappings");
+            throw;
+        }
+    }
 }

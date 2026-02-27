@@ -192,6 +192,36 @@ public class BingoConfigController : ControllerBase
         }
     }
 
+    [HttpGet("teamIcons")]
+    public IActionResult GetTeamIcons()
+    {
+        try
+        {
+            var teamIcons = _bingoService.GetTeamIcons();
+            return Ok(teamIcons);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching team icons");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
+    [HttpGet("teams")]
+    public async Task<IActionResult> GetAllTeamMappings()
+    {
+        try
+        {
+            var mappings = await _bingoService.GetAllTeamMappingsAsync();
+            return Ok(mappings);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching all team mappings");
+            return StatusCode(500, new { error = "An error occurred processing your request" });
+        }
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeleteConfig([FromQuery] string character)
     {
