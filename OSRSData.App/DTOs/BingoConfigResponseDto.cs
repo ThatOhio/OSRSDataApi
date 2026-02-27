@@ -25,6 +25,9 @@ public class BingoTeamConfigDto
 
     [JsonPropertyName("dateTimeColor")]
     public string DateTimeColor { get; set; } = string.Empty;
+
+    [JsonPropertyName("teamIcon")]
+    public string TeamIcon { get; set; } = string.Empty;
 }
 
 public class BingoItemDto

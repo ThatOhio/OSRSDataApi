@@ -181,6 +181,7 @@ public class BingoServiceTests
             TeamName = "Team Alpha",
             TeamNameColor = "#FF5733",
             DateTimeColor = "#1A2B3C",
+            TeamIcon = "icon_url",
             CreatedAt = DateTimeOffset.UtcNow
         });
         await context.SaveChangesAsync();
@@ -195,6 +196,7 @@ public class BingoServiceTests
         Assert.Equal("Team Alpha", result.TeamConfig.TeamName);
         Assert.Equal("#FF5733", result.TeamConfig.TeamNameColor);
         Assert.Equal("#1A2B3C", result.TeamConfig.DateTimeColor);
+        Assert.Equal("icon_url", result.TeamConfig.TeamIcon);
     }
 
     [Fact]
@@ -361,7 +363,8 @@ public class BingoServiceTests
         {
             TeamName = "New Team",
             TeamNameColor = "#112233",
-            DateTimeColor = "#445566"
+            DateTimeColor = "#445566",
+            TeamIcon = "new_icon"
         };
 
         // Act
@@ -373,6 +376,7 @@ public class BingoServiceTests
         Assert.Equal("New Team", config.TeamName);
         Assert.Equal("#112233", config.TeamNameColor);
         Assert.Equal("#445566", config.DateTimeColor);
+        Assert.Equal("new_icon", config.TeamIcon);
     }
 
     [Fact]

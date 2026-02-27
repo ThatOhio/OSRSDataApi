@@ -49,7 +49,8 @@ public class BingoService : IBingoService
                 {
                     TeamName = teamConfigEntity.TeamName,
                     TeamNameColor = teamConfigEntity.TeamNameColor,
-                    DateTimeColor = teamConfigEntity.DateTimeColor
+                    DateTimeColor = teamConfigEntity.DateTimeColor,
+                    TeamIcon = teamConfigEntity.TeamIcon
                 }
                 : null;
 
@@ -89,6 +90,7 @@ public class BingoService : IBingoService
             teamConfig.TeamName = updateDto.TeamName;
             teamConfig.TeamNameColor = updateDto.TeamNameColor;
             teamConfig.DateTimeColor = updateDto.DateTimeColor;
+            teamConfig.TeamIcon = updateDto.TeamIcon;
             teamConfig.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -129,6 +131,7 @@ public class BingoService : IBingoService
                 teamConfig.TeamName = configDto.TeamName;
                 teamConfig.TeamNameColor = configDto.TeamNameColor;
                 teamConfig.DateTimeColor = configDto.DateTimeColor;
+                teamConfig.TeamIcon = configDto.TeamIcon;
                 teamConfig.UpdatedAt = DateTimeOffset.UtcNow;
             }
 
@@ -251,6 +254,7 @@ public class BingoService : IBingoService
                 targetTeamConfig.TeamName = sourceTeamConfig.TeamName;
                 targetTeamConfig.TeamNameColor = sourceTeamConfig.TeamNameColor;
                 targetTeamConfig.DateTimeColor = sourceTeamConfig.DateTimeColor;
+                targetTeamConfig.TeamIcon = sourceTeamConfig.TeamIcon;
                 targetTeamConfig.UpdatedAt = DateTimeOffset.UtcNow;
             }
 
@@ -330,6 +334,7 @@ public class BingoService : IBingoService
                     targetTeamConfig.TeamName = sourceTeamConfig.TeamName;
                     targetTeamConfig.TeamNameColor = sourceTeamConfig.TeamNameColor;
                     targetTeamConfig.DateTimeColor = sourceTeamConfig.DateTimeColor;
+                    targetTeamConfig.TeamIcon = sourceTeamConfig.TeamIcon;
                     targetTeamConfig.UpdatedAt = DateTimeOffset.UtcNow;
                 }
 
