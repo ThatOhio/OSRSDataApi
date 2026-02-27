@@ -408,7 +408,18 @@ public class BingoService : IBingoService
             {
                 TeamName = "Shayzien Shower Skippers",
                 TeamIcon = "https://www.emoji.family/api/emojis/1f9a8/twemoji/png/32"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Wunescape’s Wiki Willies",
+                TeamIcon = "https://cdn.discordapp.com/emojis/1473409752011768081.png"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Mory Monster Mashers",
+                TeamIcon = "https://cdn.discordapp.com/emojis/380191922590842890.png"
             }
+            
         };
     }
 
