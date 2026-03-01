@@ -438,7 +438,7 @@ public class BingoService : IBingoService
             new BingoTeamIconDto()
             {
                 TeamName = "Gielinor Gooners",
-                TeamIcon = "https://cdn.discordapp.com/emojis/1477794610381328384.png"
+                TeamIcon = "https://cdn.discordapp.com/emojis/1477799405653463150.png"
             }
             
         };
