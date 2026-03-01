@@ -434,6 +434,11 @@ public class BingoService : IBingoService
             {
                 TeamName = "Fantastic Falador Fremboys",
                 TeamIcon = "https://i.postimg.cc/Dz0k3Jd1/7c3fda67f4f0a6a7.png"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Gielinor Gooners",
+                TeamIcon = "https://cdn.discordapp.com/emojis/1477794610381328384.png"
             }
             
         };
