@@ -424,6 +424,11 @@ public class BingoService : IBingoService
             {
                 TeamName = "Bedabin Baguette Bandits",
                 TeamIcon = "https://www.emoji.family/api/emojis/1f956/twemoji/png/32"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Darkmeyers Degenerate Deviants",
+                TeamIcon = "https://media.discordapp.net/attachments/1078401493230690344/1477786922104389834/image.png?ex=69a607d2&is=69a4b652&hm=38eb8efb0b1201dd61c4a82ba4f3d3748cf7481cf9a00fe1282ec8b27e1cf7bc&=&format=webp&quality=lossless"
             }
             
         };
