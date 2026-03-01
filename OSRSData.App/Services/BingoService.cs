@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -418,6 +419,11 @@ public class BingoService : IBingoService
             {
                 TeamName = "Mory Monster Mashers",
                 TeamIcon = "https://cdn.discordapp.com/emojis/380191922590842890.png"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Bedabin Baguette Bandits",
+                TeamIcon = "https://www.emoji.family/api/emojis/1f956/twemoji/png/32"
             }
             
         };
