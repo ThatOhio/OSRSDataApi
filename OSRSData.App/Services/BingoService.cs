@@ -413,7 +413,7 @@ public class BingoService : IBingoService
             new BingoTeamIconDto()
             {
                 TeamName = "Wunescape’s Wiki Willies",
-                TeamIcon = "https://cdn.discordapp.com/emojis/1473409752011768081.png"
+                TeamIcon = "https://www.google.com/s2/favicons?domain=https://oldschool.runescape.wiki/"
             },
             new BingoTeamIconDto()
             {
@@ -436,7 +436,10 @@ public class BingoService : IBingoService
             return await _context.BingoTeamConfigs
                 .Select(tc => new BingoTeamMappingDto
                 {
-                    Character = tc.CharacterName,
+                    // OSRS represents spaces in player names as non-breaking spaces (\u00a0) in the game engine.
+                    // This endpoint exists solely to serve the faux-bingo plugin's chat icon lookup, so we
+                    // normalise here to match what the plugin receives from chat events.
+                    Character = tc.CharacterName.Replace(' ', '\u00a0'),
                     TeamName = tc.TeamName
                 })
                 .ToListAsync();
