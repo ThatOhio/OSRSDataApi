@@ -429,6 +429,11 @@ public class BingoService : IBingoService
             {
                 TeamName = "Darkmeyers Degenerate Deviants",
                 TeamIcon = "https://i.postimg.cc/jSW-Lq5Xj/image.png"
+            },
+            new BingoTeamIconDto()
+            {
+                TeamName = "Fantastic Falador Fremboys",
+                TeamIcon = "https://i.postimg.cc/Dz0k3Jd1/7c3fda67f4f0a6a7.png"
             }
             
         };
