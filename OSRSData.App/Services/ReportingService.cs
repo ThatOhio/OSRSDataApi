@@ -89,21 +89,40 @@ public class ReportingService : IReportingService
         // Flatten to a list of items, each tagged with their source LogType.
         var allItems = playerEntries
             .Where(e => e.LootRecord != null)
-            .SelectMany(e => e.LootRecord!.Items.Select(i => new { e.Type, i }));
+            .SelectMany(e => e.LootRecord!.Items.Select(i => new { e.Type, i }))
+            .ToList();
 
-        // Group items by (Name, Quantity).
-        var groups = allItems.GroupBy(x => new { x.i.Name, x.i.Quantity });
+        // Primary pass: Group items by (Name, Quantity) and pick the best one (highest priority log type).
+        var bestItems = allItems
+            .GroupBy(x => new { x.i.Name, x.i.Quantity })
+            .Select(g => g.OrderBy(x => GetLogTypePriority(x.Type)).First())
+            .ToList();
+
+        // Secondary pass: Handle cases where the same item has a slightly different name across log types.
+        // A VALUABLE_DROP item is a duplicate if there exists a non-VALUABLE_DROP item 
+        // whose Name starts with the VALUABLE_DROP item's Name, with the same Quantity.
+        var nonValuableDrops = bestItems.Where(x => x.Type != LogType.VALUABLE_DROP).ToList();
+        var valuableDrops = bestItems.Where(x => x.Type == LogType.VALUABLE_DROP).ToList();
 
         long totalValue = 0;
-        foreach (var group in groups)
-        {
-            // Within each group, keep only the single item from the highest-priority LogType.
-            // Priority order (highest wins): RAID_LOOT (1), LOOT (2), VALUABLE_DROP (3).
-            var bestItem = group
-                .OrderBy(x => GetLogTypePriority(x.Type))
-                .First();
 
-            totalValue += (long)bestItem.i.Price * bestItem.i.Quantity;
+        // Sum all surviving non-VALUABLE_DROP items.
+        foreach (var item in nonValuableDrops)
+        {
+            totalValue += (long)item.i.Price * item.i.Quantity;
+        }
+
+        // Sum VALUABLE_DROP items only if they are not duplicates of non-VALUABLE_DROP items.
+        foreach (var vd in valuableDrops)
+        {
+            bool isDuplicate = nonValuableDrops.Any(nvd => 
+                nvd.i.Quantity == vd.i.Quantity && 
+                nvd.i.Name.StartsWith(vd.i.Name, StringComparison.Ordinal));
+            
+            if (!isDuplicate)
+            {
+                totalValue += (long)vd.i.Price * vd.i.Quantity;
+            }
         }
 
         return totalValue;

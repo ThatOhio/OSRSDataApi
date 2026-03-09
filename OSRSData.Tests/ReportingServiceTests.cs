@@ -218,6 +218,67 @@ public class ReportingServiceTests
         Assert.Equal(1200000000, pResult.TotalLootValue);
     }
 
+    [Fact]
+    public async Task GetPlayerLootLeaderboardAsync_DeduplicatesValuableDropWithShorterBaseName()
+    {
+        // Arrange
+        var context = GetDbContext();
+        var service = new ReportingService(context, NullLogger<ReportingService>.Instance);
+
+        var from = DateTimeOffset.UtcNow.AddDays(-1);
+        var to = DateTimeOffset.UtcNow.AddDays(1);
+        var player = "Player1";
+
+        // RAID_LOOT log with longer name
+        context.LogEntries.Add(new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            Player = player,
+            Type = LogType.RAID_LOOT,
+            Timestamp = DateTimeOffset.UtcNow,
+            LootRecord = new LootRecord
+            {
+                Id = Guid.NewGuid(),
+                Source = "Theatre of Blood",
+                Items = new List<LootItem>
+                {
+                    new LootItem { Id = Guid.NewGuid(), Name = "Scythe of vitur (uncharged)", Quantity = 1, Price = 500000000 }
+                }
+            }
+        });
+
+        // VALUABLE_DROP log with shorter base name
+        context.LogEntries.Add(new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            Player = player,
+            Type = LogType.VALUABLE_DROP,
+            Timestamp = DateTimeOffset.UtcNow,
+            LootRecord = new LootRecord
+            {
+                Id = Guid.NewGuid(),
+                Source = "Source",
+                Items = new List<LootItem>
+                {
+                    new LootItem { Id = Guid.NewGuid(), Name = "Scythe of vitur", Quantity = 1, Price = 500000000 }
+                }
+            }
+        });
+
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = (await service.GetPlayerLootLeaderboardAsync(from, to)).ToList();
+
+        // Assert
+        Assert.Single(result);
+        var pResult = result[0];
+        Assert.Equal(player, pResult.CharacterName);
+        
+        // Expected behavior: deduplicated, price taken from RAID_LOOT
+        Assert.Equal(500000000, pResult.TotalLootValue);
+    }
+
     private LogEntry CreateLog(string player, LogType type, string itemName, int qty, int price)
     {
         return new LogEntry
