@@ -157,6 +157,67 @@ public class ReportingServiceTests
         Assert.Equal(300, tA.TotalLootValue);
     }
 
+    [Fact]
+    public async Task GetPlayerLootLeaderboardAsync_DeduplicatesAcrossLogTypesWithDifferentPrices()
+    {
+        // Arrange
+        var context = GetDbContext();
+        var service = new ReportingService(context, NullLogger<ReportingService>.Instance);
+
+        var from = DateTimeOffset.UtcNow.AddDays(-1);
+        var to = DateTimeOffset.UtcNow.AddDays(1);
+        var player = "Player1";
+
+        // LOOT log
+        context.LogEntries.Add(new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            Player = player,
+            Type = LogType.LOOT,
+            Timestamp = DateTimeOffset.UtcNow,
+            LootRecord = new LootRecord
+            {
+                Id = Guid.NewGuid(),
+                Source = "Source",
+                Items = new List<LootItem>
+                {
+                    new LootItem { Id = Guid.NewGuid(), Name = "Twisted bow", Quantity = 1, Price = 1200000000 }
+                }
+            }
+        });
+
+        // VALUABLE_DROP log with slightly different price
+        context.LogEntries.Add(new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            Player = player,
+            Type = LogType.VALUABLE_DROP,
+            Timestamp = DateTimeOffset.UtcNow,
+            LootRecord = new LootRecord
+            {
+                Id = Guid.NewGuid(),
+                Source = "Source",
+                Items = new List<LootItem>
+                {
+                    new LootItem { Id = Guid.NewGuid(), Name = "Twisted bow", Quantity = 1, Price = 1200000005 }
+                }
+            }
+        });
+
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = (await service.GetPlayerLootLeaderboardAsync(from, to)).ToList();
+
+        // Assert
+        Assert.Single(result);
+        var pResult = result[0];
+        Assert.Equal(player, pResult.CharacterName);
+        
+        // Expected behavior: deduplicated, price taken from LOOT (higher priority than VALUABLE_DROP)
+        Assert.Equal(1200000000, pResult.TotalLootValue);
+    }
+
     private LogEntry CreateLog(string player, LogType type, string itemName, int qty, int price)
     {
         return new LogEntry

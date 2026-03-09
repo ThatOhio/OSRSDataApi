@@ -91,8 +91,8 @@ public class ReportingService : IReportingService
             .Where(e => e.LootRecord != null)
             .SelectMany(e => e.LootRecord!.Items.Select(i => new { e.Type, i }));
 
-        // Group items by (Name, Quantity, Price).
-        var groups = allItems.GroupBy(x => new { x.i.Name, x.i.Quantity, x.i.Price });
+        // Group items by (Name, Quantity).
+        var groups = allItems.GroupBy(x => new { x.i.Name, x.i.Quantity });
 
         long totalValue = 0;
         foreach (var group in groups)
