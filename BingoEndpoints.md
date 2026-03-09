@@ -299,3 +299,31 @@ Returns a list of all characters and their assigned team names.
   }
 ]
 ```
+
+---
+
+## 14. Player Loot Value Leaderboard Report
+
+Generates a CSV report showing total loot value per player within a specified timeframe, deduplicating across `LOOT`, `RAID_LOOT`, and `VALUABLE_DROP` log types.
+
+- **Method**: `GET`
+- **URL**: `/api/reporting/leaderboard/player-loot-value?from={FROM_DATETIME}&to={TO_DATETIME}`
+- **Query Parameters**:
+    - `from` (required): `DateTimeOffset` (ISO 8601 format, e.g., `2026-02-26T23:00:00+00:00`)
+    - `to` (required): `DateTimeOffset` (ISO 8601 format, e.g., `2026-03-09T01:00:00+00:00`)
+- **Description**: Returns a CSV file named `player_loot_leaderboard.csv` containing the total loot value for each player, sorted by `total_loot_value` in descending order.
+- **Response**: CSV with columns: `character_name,team_name,total_loot_value`
+
+---
+
+## 15. Team Loot Value Leaderboard Report
+
+Generates a CSV report showing total loot value per team within a specified timeframe, deduplicating across `LOOT`, `RAID_LOOT`, and `VALUABLE_DROP` log types.
+
+- **Method**: `GET`
+- **URL**: `/api/reporting/leaderboard/team-loot-value?from={FROM_DATETIME}&to={TO_DATETIME}`
+- **Query Parameters**:
+    - `from` (required): `DateTimeOffset` (ISO 8601 format, e.g., `2026-02-26T23:00:00+00:00`)
+    - `to` (required): `DateTimeOffset` (ISO 8601 format, e.g., `2026-03-09T01:00:00+00:00`)
+- **Description**: Returns a CSV file named `team_loot_leaderboard.csv` containing the total loot value for each team, sorted by `total_loot_value` in descending order. Players without a team are grouped under an empty string team name.
+- **Response**: CSV with columns: `team_name,total_loot_value`
