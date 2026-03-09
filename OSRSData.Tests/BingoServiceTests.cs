@@ -756,7 +756,7 @@ public class BingoServiceTests
         var result = service.GetTeamIcons();
 
         // Assert
-        Assert.Single(result);
+        Assert.Equal(7, result.Count);
         Assert.Equal("Shayzien Shower Skippers", result[0].TeamName);
         Assert.Equal("https://www.emoji.family/api/emojis/1f9a8/twemoji/png/32", result[0].TeamIcon);
     }

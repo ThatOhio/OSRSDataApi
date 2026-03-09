@@ -19,6 +19,7 @@ public class Program
         // Application Services
         builder.Services.AddScoped<ILogService, LogService>();
         builder.Services.AddScoped<IBingoService, BingoService>();
+        builder.Services.AddScoped<IReportingService, ReportingService>();
 
         builder.Services.AddAuthorization();
 
