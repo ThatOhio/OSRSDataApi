@@ -33,14 +33,14 @@ public class BingoService : IBingoService
                 .Select(w => w.WebhookUrl)
                 .ToListAsync();
 
-            var items = await _context.BingoItems
-                .OrderBy(i => i.CreatedAt)
-                .Select(i => new BingoItemDto
-                {
-                    Name = i.ItemName,
-                    Source = i.Source
-                })
-                .ToListAsync();
+            // var items = await _context.BingoItems
+            //     .OrderBy(i => i.CreatedAt)
+            //     .Select(i => new BingoItemDto
+            //     {
+            //         Name = i.ItemName,
+            //         Source = i.Source
+            //     })
+            //     .ToListAsync();
 
             var teamConfigEntity = await _context.BingoTeamConfigs
                 .FirstOrDefaultAsync(tc => tc.CharacterName.ToLower() == characterNameLower);
@@ -58,7 +58,7 @@ public class BingoService : IBingoService
             return new BingoConfigResponseDto
             {
                 Webhooks = webhooks,
-                Items = items,
+                Items = [],
                 TeamConfig = teamConfigDto
             };
         }
